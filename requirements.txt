@@ -1,0 +1,9 @@
+# Pre-built universal2 wheel constraint for macOS x86_64 (avoids Rust/OpenSSL source build)
+cryptography<44
+
+# Core Cisco Network Test Automation Framework + Genie Parsers
+pyats[library]>=25.10
+
+# Configuration & Testing
+PyYAML>=6.0
+pytest>=8.0.0

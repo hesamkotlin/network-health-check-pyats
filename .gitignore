@@ -1,0 +1,38 @@
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python byte-compile cache & packaging artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Secrets and local environment overrides
+.env
+*.secret
+testbed/devices.yaml
+
+# Pytest & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# pyATS runtime archives & generated logs (keep reports/.gitkeep)
+reports/*.json
+reports/*.md
+reports/*.zip
+reports/pyats_archive/
+*.log
+
+# SQLite local database files
+*.db
+*.sqlite
+*.sqlite3
+
+# macOS system files
+.DS_Store

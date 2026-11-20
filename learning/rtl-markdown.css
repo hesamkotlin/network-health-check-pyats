@@ -1,0 +1,40 @@
+/* RTL Stylesheet for Persian Learning Documentation in Markdown Preview */
+body,
+.markdown-body {
+  direction: rtl !important;
+  text-align: right !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Vazirmatn", "IRANSans", "Tahoma", "Segoe UI", sans-serif;
+  line-height: 1.85;
+}
+
+h1, h2, h3, h4, h5, h6, p, ul, ol, li, blockquote {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+/* Keep all code blocks and inline code strictly Left-to-Right (LTR) */
+pre,
+pre code,
+.hljs {
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: embed;
+  font-family: "SF Mono", Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+code {
+  direction: ltr !important;
+  unicode-bidi: isolate;
+  font-family: "SF Mono", Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+table {
+  direction: rtl !important;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  text-align: right !important;
+  padding: 8px 12px;
+}

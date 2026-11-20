@@ -1,0 +1,39 @@
+# Expected Network State Policy for Offline Simulated IOS-XE Router (sim-rtr-core-01)
+device:
+  hostname: sim-rtr-core-01
+  os_type: iosxe
+
+expected_interfaces:
+  - name: GigabitEthernet1
+    admin_status: up
+    oper_status: up
+    ip_address: 10.10.20.1
+    prefix_length: 24
+
+  - name: GigabitEthernet2
+    admin_status: up
+    oper_status: up
+    ip_address: 172.16.10.1
+    prefix_length: 24
+
+  - name: Loopback0
+    admin_status: up
+    oper_status: up
+    ip_address: 192.168.255.1
+    prefix_length: 32
+
+expected_routes:
+  - prefix: 0.0.0.0/0
+    protocol: static
+    next_hop: 10.10.20.254
+    must_be_active: true
+
+  - prefix: 10.10.20.0/24
+    protocol: connected
+    outgoing_interface: GigabitEthernet1
+    must_be_active: true
+
+  - prefix: 172.16.10.0/24
+    protocol: connected
+    outgoing_interface: GigabitEthernet2
+    must_be_active: true

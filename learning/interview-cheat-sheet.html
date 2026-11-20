@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تقلب‌نامه جامع مصاحبه فنی — Network Health Check (Python + pyATS + FastAPI)</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --accent: #38bdf8;
+      --gold: #fbbf24;
+      --green: #4ade80;
+      --code-bg: #090d16;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 32px 20px;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Vazirmatn", "IRANSans", "Tahoma", sans-serif;
+      direction: rtl;
+      text-align: right;
+      line-height: 1.85;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    header {
+      background: linear-gradient(135deg, #1e3a8a, #0f172a);
+      border: 1px solid var(--accent);
+      border-radius: 14px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+    }
+    h1 {
+      margin: 0 0 8px 0;
+      font-size: 1.65rem;
+      color: var(--accent);
+    }
+    h2 {
+      color: var(--gold);
+      font-size: 1.25rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      margin-top: 0;
+    }
+    .card {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+    }
+    .q-title {
+      color: var(--green);
+      font-weight: bold;
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+    }
+    .answer {
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    code {
+      direction: ltr;
+      unicode-bidi: isolate;
+      background-color: var(--code-bg);
+      color: #7dd3fc;
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-family: "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.9em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: right;
+    }
+    th {
+      background-color: #0f172a;
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎯 تقلب‌نامه جامع مصاحبه فنی (Interview Cheat Sheet)</h1>
+      <div>پروژه: <code>Network Health Check Automation System (Python + Cisco pyATS + FastAPI + Docker)</code></div>
+    </header>
+
+    <div class="card">
+      <h2>۱. معرفی ۲ دقیقه‌ای پروژه در شروع مصاحبه (Elevator Pitch)</h2>
+      <ol>
+        <li><b>معماری کلی (Modular Monolith):</b> سیستمی با اصول Clean Architecture نوشتم که وضعیت واقعی روتر سیسکو (<code>Actual State</code>) را با وضعیت مورد انتظار در فایل YAML (<code>Expected State</code>) مقایسه و گزارش <code>PASS / FAIL</code> تولید می‌کند.</li>
+        <li><b>لایه Core Domain:</b> مدل‌های تغییرناپذیر را با <code>@dataclass(frozen=True)</code> و Validatorها را به صورت Pure Functions بدون وابستگی به شبکه نوشتم.</li>
+        <li><b>جداسازی شبیه‌ساز آفلاین از روتر واقعی:</b> با <code>ABC</code> یک اینترفیس <code>NetworkDeviceConnector</code> ساختم که دو پیاده‌سازی دارد: شبیه‌ساز آفلاین (<code>SimulatedIosXeDevice</code>) برای CI/CD و کانکتور واقعی (<code>PyAtsRealDeviceConnector</code>) با <code>Unicon SSH</code> و متغیرهای محیطی امن <code>%ENV{...}</code>.</li>
+        <li><b>پارس کردن دستورات با Cisco Genie:</b> به جای Regex دستی، از Parserهای رسمی <code>Genie</code> برای <code>show interfaces</code> و <code>show ip route</code> استفاده کردم.</li>
+        <li><b>هم‌زمانی، دیتابیس و API:</b> اجرای هم‌زمان چند روتر را با <code>ThreadPoolExecutor</code> و <code>asyncio.to_thread</code> (به همراه Timeout و Error Isolation) نوشتم، نتایج را با Parameterized SQL در <code>SQLite</code> ذخیره کردم و با <code>FastAPI</code> و <code>Docker</code> سرو کردم.</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h2>۲. سؤالات قطعی مصاحبه: Concurrency و قفل GIL (فاز ۷)</h2>
+      <div class="q-title">سؤال ۱: قفل GIL در پایتون چیست و چرا Threading برای SSH زدن به ۱۰۰ روتر سرعت را بالا می‌برد؟</div>
+      <div class="answer">
+        قفل <code>GIL (Global Interpreter Lock)</code> در CPython اجازه می‌دهد در هر لحظه فقط یک Thread بایت‌کد پایتون را روی CPU اجرا کند. اما چون SSH زدن به روتر یک کار <b>I/O-Bound</b> است، مفسر پایتون در تمام لحظاتی که منتظر پاسخ شبکه است <b>قفل GIL را آزاد می‌کند</b> تا سایر Threadها به روترهای دیگر درخواست بفرستند. برای کارهای محاسباتی سنگین (<b>CPU-Bound</b>) از <code>Multiprocessing (ProcessPoolExecutor)</code> استفاده می‌کنیم تا هر پروسه GIL و هسته CPU مستقل خودش را داشته باشد.
+      </div>
+
+      <div class="q-title">سؤال ۲: اگر یک تابع Synchronous را مستقیم داخل <code>async def</code> صدا بزنیم چه می‌شود؟</div>
+      <div class="answer">
+        کل <b>Event Loop تک‌نخی</b> قفل (Block) می‌شود! برای جلوگیری از بلاک شدن Event Loop باید آن را با <code>await asyncio.to_thread(sync_func, arg)</code> (معادل <code>withContext(Dispatchers.IO)</code> در کاتلین) به یک Thread پس‌زمینه بفرستیم.
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>مدل در Python</th>
+            <th>معادل در Kotlin</th>
+            <th>کاربرد اصلی</th>
+            <th>رفتار با GIL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>ThreadPoolExecutor</code></td>
+            <td><code>Dispatchers.IO</code></td>
+            <td><b>I/O-Bound</b> (شبکه، SSH، فایل)</td>
+            <td>در زمان انتظار شبکه آزاد می‌شود</td>
+          </tr>
+          <tr>
+            <td><code>ProcessPoolExecutor</code></td>
+            <td>پروسه‌های مستقل OS</td>
+            <td><b>CPU-Bound</b> (پردازش سنگین)</td>
+            <td>هر پروسه GIL مستقل خودش را دارد</td>
+          </tr>
+          <tr>
+            <td><code>asyncio (async/await)</code></td>
+            <td><code>Kotlin Coroutines</code></td>
+            <td>وب‌سرور <code>FastAPI</code> و I/O ناهمگام</td>
+            <td>تک‌نخی؛ نیازمند <code>asyncio.to_thread</code> برای کد همگام</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>۳. سؤالات قطعی مصاحبه: FastAPI، SQLite، Docker و معماری (فازهای ۶ و ۸)</h2>
+      <div class="q-title">سؤال ۳: چرا FastAPI را به جای Flask یا Django انتخاب کردید؟</div>
+      <div class="answer">
+        ۱) اعتبارسنجی خودکار JSON ورودی با <code>Pydantic</code> بر اساس Type Hints و برگرداندن خودکار کد <code>422 Unprocessable Entity</code> در صورت خطای ورودی.<br/>
+        ۲) پشتیبانی بومی از <code>async / await</code> (استاندارد ASGI).<br/>
+        ۳) تولید خودکار مستندات تعاملی Swagger UI در مسیر <code>/docs</code>.
+      </div>
+
+      <div class="q-title">سؤال ۴: چرا در کوئری‌های SQL نباید از <code>f-string</code> استفاده کنیم؟</div>
+      <div class="answer">
+        چون باعث آسیب‌پذیری <b>SQL Injection</b> می‌شود (مفسر SQL ورودی کاربر را با دستور اجرایی قاطی می‌کند). راه‌حل استاندارد استفاده از <b>Parameterized Queries</b> با علامت سؤال (<code>WHERE run_id = ?</code>) است.
+      </div>
+
+      <div class="q-title">سؤال ۵: چرا پروژه را با Modular Monolith شروع کردید نه Microservices؟</div>
+      <div class="answer">
+        چون در مقیاس اولیه از Over-Engineering و Network Latency جلوگیری می‌کند و ماژول‌ها در حافظه با هم در ارتباط هستند؛ اما چون مرز پکیج‌ها (<code>api</code>, <code>core</code>, <code>devices</code>, <code>database</code>) کاملاً جداست، در مقیاس بالا به‌راحتی به کانتینرهای میکروسرویس مجزا شکسته می‌شود.
+      </div>
+
+      <div class="q-title">سؤال ۶: چرا داخل کانتینر Docker باید وب‌سرور را روی <code>0.0.0.0</code> اجرا کنیم نه <code>127.0.0.1</code>؟</div>
+      <div class="answer">
+        چون هر کانتینر Docker شبکه مجازی خودش را دارد و <code>127.0.0.1</code> فقط از داخل خود کانتینر قابل دسترسی است. برای دریافت ترافیک از بیرون کانتینر باید روی <code>0.0.0.0</code> گوش بدهد.
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>۴. سؤالات قطعی مصاحبه: Python، pyATS، Genie و شبکه (فازهای ۱ تا ۵)</h2>
+      <div class="q-title">سؤال ۷: چرا در <code>@dataclass</code> از <code>field(default_factory=dict)</code> به جای <code>= {}</code> استفاده می‌کنیم؟</div>
+      <div class="answer">
+        چون مقدار پیش‌فرض مستقیم فقط یک بار در زمان تعریف کلاس ساخته می‌شود و بین تمام نمونه‌ها مشترک می‌شود؛ اما <code>default_factory=dict</code> برای هر نمونه یک دیکشنری جدید می‌سازد.
+      </div>
+
+      <div class="q-title">سؤال ۸: تفاوت pyATS (AEtest)، Genie و Unicon چیست؟</div>
+      <div class="answer">
+        • <code>AEtest</code>: فریم‌ورک چرخه حیات تست (<code>CommonSetup</code>، <code>Testcase</code>، <code>CommonCleanup</code> — معادل JUnit).<br/>
+        • <code>Genie</code>: کتابخانه پارس کردن خروجی متنی دستورات روتر به دیکشنری ساختاریافته پایتون (با <code>output=raw_text</code> به صورت ۱۰۰٪ آفلاین هم کار می‌کند).<br/>
+        • <code>Unicon</code>: موتور اتصال SSH به روتر با State Machine هوشمند برای مدیریت Promptها و صفحه‌بندی (<code>--More--</code>).
+      </div>
+    </div>
+  </div>
+</body>
+</html>

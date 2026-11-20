@@ -1,0 +1,12 @@
+{
+  "metadata": {
+    "description": "Representative Cisco IOS-XE CLI outputs for an UNHEALTHY simulated router (sim-rtr-core-01): GigabitEthernet2 is administratively down, GigabitEthernet1 has wrong IP (10.10.99.1/24), and default route 0.0.0.0/0 is missing.",
+    "is_simulated": true,
+    "os": "iosxe"
+  },
+  "commands": {
+    "show ip interface brief": "Interface              IP-Address      OK? Method Status                Protocol\nGigabitEthernet1       10.10.99.1      YES NVRAM  up                    up      \nGigabitEthernet2       172.16.10.1     YES NVRAM  administratively down down    \nLoopback0              192.168.255.1   YES NVRAM  up                    up      \n",
+    "show interfaces": "GigabitEthernet1 is up, line protocol is up \n  Hardware is CSR vNIC, address is 5254.0012.3401 (bia 5254.0012.3401)\n  Internet address is 10.10.99.1/24\n  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, \n     reliability 255/255, txload 1/255, rxload 1/255\nGigabitEthernet2 is administratively down, line protocol is down \n  Hardware is CSR vNIC, address is 5254.0012.3402 (bia 5254.0012.3402)\n  Internet address is 172.16.10.1/24\n  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, \n     reliability 255/255, txload 1/255, rxload 1/255\nLoopback0 is up, line protocol is up \n  Hardware is Loopback\n  Internet address is 192.168.255.1/32\n  MTU 1514 bytes, BW 8000000 Kbit/sec, DLY 5000 usec, \n     reliability 255/255, txload 1/255, rxload 1/255\n",
+    "show ip route": "Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP\n       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area \n\nGateway of last resort is not set\n\n      10.0.0.0/8 is variably subnetted, 2 subnets, 2 masks\nC        10.10.99.0/24 is directly connected, GigabitEthernet1\nL        10.10.99.1/32 is directly connected, GigabitEthernet1\n      192.168.255.0/24 is variably subnetted, 1 subnets, 1 masks\nC        192.168.255.1/32 is directly connected, Loopback0\n"
+  }
+}

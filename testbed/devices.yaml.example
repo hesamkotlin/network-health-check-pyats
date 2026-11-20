@@ -1,0 +1,46 @@
+# pyATS Testbed Configuration Template
+# ---------------------------------------------------------------------------
+# Phase 2–4 (Offline Simulation):
+#   This testbed file can be loaded with `pyats.topology.loader.load()` to
+#   inspect Device and Interface topology objects without opening SSH sockets.
+#
+# Phase 5 (Real Cisco DevNet Sandbox Integration):
+#   Credentials are dynamically injected by pyATS using %ENV{VAR_NAME} markup
+#   so secrets are NEVER hardcoded in source control.
+# ---------------------------------------------------------------------------
+
+testbed:
+  name: network_health_check_testbed
+
+devices:
+  sim-rtr-core-01:
+    alias: core_router
+    os: iosxe
+    type: router
+    platform: cat8000v
+    custom:
+      mode: simulated
+    connections:
+      defaults:
+        class: unicon.Unicon
+      cli:
+        protocol: ssh
+        ip: "%ENV{CISCO_SANDBOX_HOST}"
+        port: "%ENV{CISCO_SANDBOX_PORT}"
+    credentials:
+      default:
+        username: "%ENV{CISCO_SANDBOX_USERNAME}"
+        password: "%ENV{CISCO_SANDBOX_PASSWORD}"
+
+topology:
+  sim-rtr-core-01:
+    interfaces:
+      GigabitEthernet1:
+        ipv4: 10.10.20.1/24
+        type: ethernet
+      GigabitEthernet2:
+        ipv4: 172.16.10.1/24
+        type: ethernet
+      Loopback0:
+        ipv4: 192.168.255.1/32
+        type: loopback

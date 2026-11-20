@@ -1,0 +1,31 @@
+# Phase 8: Reference Microservices Decomposition with Docker Compose
+# Demonstrates how the Modular Monolith can be split into independent containers
+# if scale demands independent deployment of API, Worker, and Device Inventory.
+
+services:
+  api-service:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: nhc-api-service
+    ports:
+      - "8000:8000"
+    environment:
+      - NHC_MODE=offline
+      - NHC_DATABASE_PATH=/app/reports/network_health_history.db
+    volumes:
+      - nhc_results_data:/app/reports
+
+  test-execution-worker:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: nhc-test-worker
+    command: ["python", "src/network_health/tests/aetest_health_check.py", "--scenario", "healthy"]
+    environment:
+      - NHC_MODE=offline
+    volumes:
+      - nhc_results_data:/app/reports
+
+volumes:
+  nhc_results_data:

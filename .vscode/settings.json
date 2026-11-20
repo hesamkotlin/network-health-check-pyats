@@ -1,0 +1,10 @@
+{
+  "markdown.styles": [
+    "learning/rtl-markdown.css"
+  ],
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestArgs": [
+    "src/network_health/tests"
+  ]
+}
